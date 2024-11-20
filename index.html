@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Random Typing</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            color: #00ff00;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #screen {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        #press-key {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            color: white;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        #buttons {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            opacity: 0;
+            animation: fadeIn 2s ease forwards;
+            z-index: 2;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .social-button {
+            background-color: black;
+            color: #00ff00;
+            border: 2px solid #00ff00;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .social-button:hover {
+            background-color: #00ff00;
+            color: black;
+        }
+
+        #text-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none; /* Текст недоступен для взаимодействия */
+        }
+
+        .text-snippet {
+            position: absolute;
+            font-size: 1.2rem;
+            white-space: pre;
+            opacity: 1;
+        }
+
+        #flash-image {
+            position: absolute;
+            width: 200px;
+            opacity: 0;
+            transition: opacity 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+    <div id="screen">
+        <div id="press-key">Press any key</div>
+        <div id="buttons" class="hidden">
+            <button class="social-button" id="telegram">Telegram</button>
+            <button class="social-button" id="twitter">Twitter</button>
+        </div>
+        <div id="text-container"></div>
+        <img id="flash-image" src="https://example.com/your-image.jpg" alt="Random Image">
+    </div>
+    <script>
+        const pressKey = document.getElementById('press-key');
+        const buttons = document.getElementById('buttons');
+        const textContainer = document.getElementById('text-container');
+        const flashImage = document.getElementById('flash-image');
+
+        // Текст для отображения
+        const fakeCode = [
+            "Добро пожаловать в систему CHILLMOG.",
+            "Загрузка данных...",
+            "Подключение к серверу...",
+            "Сканирование завершено.",
+            "Инициализация процессов...",
+            "Установка соединения...",
+            "Выполнено. Доступ разрешён."
+        ];
+
+        // Функция для отображения текста в случайных местах
+        const displayTextSnippet = () => {
+            const randomX = Math.random() * (window.innerWidth - 200);
+            const randomY = Math.random() * (window.innerHeight - 30);
+            const randomText = fakeCode[Math.floor(Math.random() * fakeCode.length)];
+
+            const textSnippet = document.createElement('div');
+            textSnippet.className = 'text-snippet';
+            textSnippet.style.left = `${randomX}px`;
+            textSnippet.style.top = `${randomY}px`;
+            textSnippet.textContent = randomText;
+
+            textContainer.appendChild(textSnippet);
+        };
+
+        // Функция для показа изображения в случайных местах
+        const showFlashImage = () => {
+            setInterval(() => {
+                const randomX = Math.random() * (window.innerWidth - flashImage.offsetWidth);
+                const randomY = Math.random() * (window.innerHeight - flashImage.offsetHeight);
+
+                flashImage.style.left = `${randomX}px`;
+                flashImage.style.top = `${randomY}px`;
+                flashImage.style.opacity = '1';
+
+                setTimeout(() => {
+                    flashImage.style.opacity = '0'; // Прячем через 200ms
+                }, 200);
+            }, 500); // Появление каждые 500ms
+        };
+
+        // Функция для показа кнопок
+        const showButtons = () => {
+            buttons.classList.remove('hidden'); // Показываем кнопки
+        };
+
+        // Основной обработчик первого нажатия
+        const handleFirstKeyPress = () => {
+            pressKey.style.display = 'none'; // Убираем мигающий текст
+            showButtons(); // Показываем кнопки
+            setInterval(displayTextSnippet, 500); // Показываем текст
+            showFlashImage(); // Показываем изображения
+        };
+
+        // Ждём нажатия любой клавиши
+        document.addEventListener('keydown', handleFirstKeyPress, { once: true });
+    </script>
+</body>
+</html>
